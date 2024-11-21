@@ -34,9 +34,3 @@ certIssuingMode: false
 # http
 publicService: true
 sslRedirect: false
-
-
-secrets:
-  nextPublicProxyKey: "redacted_proxy_key"
-  nextPublicMixpanelToken: "redacted_mixpanel_token"
-  nextPublicAnalyticsEnabled: "true"
