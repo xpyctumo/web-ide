@@ -1,0 +1,91 @@
+.root {
+  .collapse,
+  .collapsePanel {
+    user-select: none;
+  }
+  .collapsePanel {
+    > div {
+      padding: 0.3125rem 0.75rem !important;
+    }
+    .collapseHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .action {
+      display: inline-flex;
+      cursor: pointer;
+      padding: 0.2rem;
+      background-color: var(--light-grey);
+      border-radius: 50%;
+      position: absolute;
+      right: -0.5rem;
+      &:hover {
+        background-color: var(--light-grey);
+      }
+    }
+    .fileItem {
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: space-between;
+      position: relative;
+      .status {
+        font-size: 0.8em;
+      }
+      &:hover {
+        .action {
+          visibility: visible;
+        }
+        .status {
+          visibility: hidden;
+        }
+      }
+      .fileDetails {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .action {
+        visibility: hidden;
+        &:hover {
+          visibility: visible;
+        }
+      }
+    }
+    .filePath {
+      opacity: 0.6;
+      font-size: 0.8rem;
+    }
+    ul {
+      padding: 0;
+      list-style-type: none;
+      li {
+        margin: 0.4rem 0;
+      }
+    }
+    div[class*='ant-collapse-content-box'] {
+      padding: 0;
+    }
+    div[class*='ant-collapse-header'] {
+      font-weight: 600;
+    }
+    div[class*='ant-collapse-expand-icon'] {
+      padding-inline-end: 5px;
+    }
+  }
+  .commitItem {
+    padding: 0.5rem 0;
+    overflow-wrap: break-word;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--grey);
+    }
+    .commitAuthor {
+      opacity: 0.6;
+      font-size: 0.7rem;
+    }
+  }
+}

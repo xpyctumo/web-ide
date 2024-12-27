@@ -1,5 +1,6 @@
 'use client';
 
+import { ManageGit } from '@/components/git';
 import { DownloadProject } from '@/components/project';
 import { ProjectTemplate } from '@/components/template';
 import { NonProductionNotice } from '@/components/ui';
@@ -22,6 +23,7 @@ import { useEffectOnce } from 'react-use';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import BuildProject from '../BuildProject';
 import Editor from '../Editor';
+import CodeDiffViewer from '../Editor/CodeDiffViewer';
 import Tabs from '../Tabs';
 import TestCases from '../TestCases';
 import WorkspaceSidebar from '../WorkspaceSidebar';
@@ -221,8 +223,13 @@ const WorkSpace: FC = () => {
             />
           )}
           {activeMenu === 'test-cases' && (
-            <div className={s.testCaseArea}>
+            <div className={s.commonContainer}>
               <TestCases projectId={activeProject?.path as string} />
+            </div>
+          )}
+          {activeMenu === 'git' && (
+            <div className={s.commonContainer}>
+              <ManageGit />
             </div>
           )}
         </div>
@@ -244,9 +251,16 @@ const WorkSpace: FC = () => {
                   <div className={s.tabsWrapper}>
                     <Tabs />
                   </div>
-
                   <div style={{ height: 'calc(100% - 43px)' }}>
-                    {fileTab.active ? <Editor /> : <ProjectTemplate />}
+                    {fileTab.active ? (
+                      fileTab.active.type === 'git' ? (
+                        <CodeDiffViewer />
+                      ) : (
+                        <Editor />
+                      )
+                    ) : (
+                      <ProjectTemplate />
+                    )}
                   </div>
                 </div>
                 <div>

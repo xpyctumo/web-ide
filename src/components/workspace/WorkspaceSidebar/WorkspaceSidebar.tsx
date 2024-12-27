@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { FC, useContext, useEffect } from 'react';
 import s from './WorkspaceSidebar.module.scss';
 
-export type WorkSpaceMenu = 'code' | 'build' | 'test-cases' | 'setting';
+export type WorkSpaceMenu = 'code' | 'build' | 'test-cases' | 'setting' | 'git';
 interface MenuItem {
   label: string;
   value: WorkSpaceMenu;
@@ -60,6 +60,11 @@ const WorkspaceSidebar: FC<Props> = ({
       label: 'Unit Test',
       value: 'test-cases',
       icon: 'Test',
+    },
+    {
+      label: 'Git',
+      value: 'git',
+      icon: 'GitBranch',
     },
   ];
 

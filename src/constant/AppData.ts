@@ -1,7 +1,7 @@
 export const AppData = {
   socials: [
     {
-      label: 'GitHub',
+      label: 'Project GitHub',
       icon: 'GitHub',
       url: 'https://github.com/tact-lang/web-ide',
     },

@@ -1,9 +1,9 @@
 import { useSettingAction } from '@/hooks/setting.hooks';
-import { ContractLanguage, Tree } from '@/interfaces/workspace.interface';
+import { Tree } from '@/interfaces/workspace.interface';
+import { configureMonacoEditor } from '@/utility/editor';
 import EventEmitter from '@/utility/eventEmitter';
-import { highlightCodeSnippets } from '@/utility/syntaxHighlighter';
 import { delay, fileTypeFromFileName } from '@/utility/utils';
-import EditorDefault, { loader } from '@monaco-editor/react';
+import EditorDefault from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { FC, useEffect, useRef, useState } from 'react';
 // import { useLatest } from 'react-use';
@@ -14,6 +14,7 @@ import { useLatest } from 'react-use';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import s from './Editor.module.scss';
 import { editorOnMount } from './EditorOnMount';
+import { editorOptions } from './shared';
 type Monaco = typeof monaco;
 
 interface Props {
@@ -66,8 +67,8 @@ const Editor: FC<Props> = ({ className = '' }) => {
         );
         await delay(200);
       }
-      await storeFileContent(fileTab.active, fileContent);
-      EventEmitter.emit('FILE_SAVED', { filePath: fileTab.active });
+      await storeFileContent(fileTab.active.path, fileContent);
+      EventEmitter.emit('FILE_SAVED', { filePath: fileTab.active.path });
     } catch (error) {
       /* empty */
     }
@@ -78,26 +79,9 @@ const Editor: FC<Props> = ({ className = '' }) => {
   };
 
   useEffect(() => {
-    async function loadMonacoEditor() {
-      const monaco = await import('monaco-editor');
+    if (!fileTab.active) return;
 
-      window.MonacoEnvironment.getWorkerUrl = (_: string, label: string) => {
-        if (label === 'typescript') {
-          return '/_next/static/ts.worker.js';
-        } else if (label === 'json') {
-          return '/_next/static/json.worker.js';
-        }
-        return '/_next/static/editor.worker.js';
-      };
-      loader.config({ monaco });
-      if (!fileTab.active) return;
-      await highlightCodeSnippets(
-        loader,
-        fileTypeFromFileName(fileTab.active) as ContractLanguage,
-      );
-    }
-
-    loadMonacoEditor()
+    configureMonacoEditor(fileTab.active.path)
       .then(() => {
         setIsLoaded(true);
       })
@@ -127,14 +111,14 @@ const Editor: FC<Props> = ({ className = '' }) => {
     EventEmitter.on('FORCE_UPDATE_FILE', (file) => {
       if (
         !activeProject?.path ||
-        (latestFile.current?.includes('setting.json') &&
+        (latestFile.current?.path.includes('setting.json') &&
           typeof file == 'string')
       )
         return;
 
       (async () => {
         const filePath = typeof file === 'string' ? file : file.newPath;
-        if (filePath !== latestFile.current) return;
+        if (filePath !== latestFile.current?.path) return;
         await fetchFileContent(true);
       })().catch((error) => {
         console.error('Error handling FORCE_UPDATE_FILE event:', error);
@@ -148,9 +132,12 @@ const Editor: FC<Props> = ({ className = '' }) => {
 
   const fetchFileContent = async (force = false) => {
     if (!fileTab.active) return;
-    if ((!fileTab.active || fileTab.active === initialFile?.id) && !force)
+    if (
+      (!fileTab.active.path || fileTab.active.path === initialFile?.id) &&
+      !force
+    )
       return;
-    let content = (await getFile(fileTab.active)) as string;
+    let content = (await getFile(fileTab.active.path)) as string;
     if (!editorRef.current) return;
     let modelContent = editorRef.current.getValue();
 
@@ -163,7 +150,7 @@ const Editor: FC<Props> = ({ className = '' }) => {
     } else {
       editorRef.current.setValue(content);
     }
-    setInitialFile({ id: fileTab.active, content });
+    setInitialFile({ id: fileTab.active.path, content });
     editorRef.current.focus();
   };
 
@@ -171,8 +158,8 @@ const Editor: FC<Props> = ({ className = '' }) => {
     if (!editorRef.current) return;
     const fileContent = editorRef.current.getValue();
     if (
-      fileTab.active !== initialFile?.id ||
-      !initialFile.content ||
+      fileTab.active?.path !== initialFile?.id ||
+      !initialFile?.content ||
       initialFile.content === fileContent
     ) {
       return;
@@ -180,7 +167,8 @@ const Editor: FC<Props> = ({ className = '' }) => {
     if (!fileContent) {
       return;
     }
-    updateFileDirty(fileTab.active, true);
+    if (!fileTab.active?.path) return;
+    updateFileDirty(fileTab.active.path, true);
   };
 
   const initializeEditorMode = async () => {
@@ -250,29 +238,20 @@ const Editor: FC<Props> = ({ className = '' }) => {
       </div>
       <EditorDefault
         className={s.editor}
-        path={fileTab.active ?? ''}
+        path={fileTab.active?.path ?? ''}
         theme={theme === 'dark' ? 'vs-theme-dark' : 'light'}
         // height="90vh"
-        defaultLanguage={fileTypeFromFileName(fileTab.active ?? '')}
-        // defaultLanguage={`func`}
+        defaultLanguage={fileTypeFromFileName(fileTab.active?.path ?? '')}
         defaultValue={undefined}
         onChange={markFileDirty}
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          fontSize: 14,
-          bracketPairColorization: {
-            enabled: true,
-          },
-        }}
+        options={editorOptions}
         onMount={(editor, monaco) => {
           (async () => {
             editorRef.current = editor;
             monacoRef.current = monaco;
 
             setIsEditorInitialized(true);
-            await editorOnMount(editor, monaco);
+            await editorOnMount(monaco);
             await initializeEditorMode();
             editor.onDidChangeCursorPosition(() => {
               const position = editor.getPosition();

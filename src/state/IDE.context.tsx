@@ -5,12 +5,13 @@ import { FC, createContext, useEffect, useMemo, useState } from 'react';
 interface ITabItems {
   name: string;
   path: string;
+  type: 'default' | 'git';
   isDirty: boolean;
 }
 
 export interface IFileTab {
   items: ITabItems[];
-  active: string | null;
+  active: Pick<ITabItems, 'path' | 'type'> | null;
 }
 
 interface IDEContextProps {

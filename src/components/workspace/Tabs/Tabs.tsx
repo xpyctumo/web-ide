@@ -55,17 +55,18 @@ const Tabs: FC = () => {
         {fileTab.items.map((item) => (
           <div
             onClick={() => {
-              open(item.name, item.path);
+              open(item.name, item.path, item.type);
             }}
             className={`${s.item} 
             file-icon
             ${item.name.split('.').pop()}-lang-file-icon
             ${fileTypeFromFileName(item.name)}-lang-file-icon
-               ${item.path === fileTab.active ? s.isActive : ''}
+               ${item.path === fileTab.active?.path ? s.isActive : ''}
               `}
             key={item.path}
           >
             {item.name}
+            {item.type === 'git' && ' (git)'}
             <span
               className={`${s.close} ${item.isDirty ? s.isDirty : ''}`}
               onClick={(e) => {

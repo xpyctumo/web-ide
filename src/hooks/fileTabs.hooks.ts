@@ -55,20 +55,24 @@ const useFileTab = () => {
     }
   };
 
-  const open = (name: string, path: string) => {
-    if (fileTab.active === path) return;
+  const open = (
+    name: string,
+    path: string,
+    type: 'default' | 'git' = 'default',
+  ) => {
+    if (fileTab.active?.path === path) return;
 
     const existingTab = fileTab.items.find((item) => item.path === path);
 
     if (existingTab) {
-      const updatedTab = { ...fileTab, active: path };
+      const updatedTab = { ...fileTab, active: { path, type }, type };
       syncTabSettings(updatedTab);
     } else {
-      const newTab = { name, path, isDirty: false };
+      const newTab = { name, path, isDirty: false, type };
       const updatedTab = {
         ...fileTab,
         items: [...fileTab.items, newTab],
-        active: path,
+        active: { path, type },
       };
       syncTabSettings(updatedTab);
     }
@@ -85,15 +89,17 @@ const useFileTab = () => {
       );
 
       let newActiveTab = fileTab.active;
-      if (fileTab.active === filePath) {
+      if (fileTab.active?.path === filePath) {
         const closedTabIndex = fileTab.items.findIndex(
           (item) => item.path === filePath,
         );
-        if (updatedItems.length > 0) {
+        if (updatedItems.length > 0 && newActiveTab) {
           if (closedTabIndex > 0) {
-            newActiveTab = updatedItems[closedTabIndex - 1].path;
+            newActiveTab.path = updatedItems[closedTabIndex - 1].path;
+            newActiveTab.type = updatedItems[closedTabIndex - 1].type;
           } else {
-            newActiveTab = updatedItems[0].path;
+            newActiveTab.path = updatedItems[0].path;
+            newActiveTab.type = updatedItems[0].type;
           }
         } else {
           newActiveTab = null; // No more tabs open
@@ -119,11 +125,13 @@ const useFileTab = () => {
     });
 
     // Check if the old path was the active tab
-    const isActiveTab = fileTab.active === oldPath;
+    const isActiveTab = fileTab.active?.path === oldPath;
 
     const updatedTab = {
       items: updatedItems,
-      active: isActiveTab ? newPath : fileTab.active, // Set the active tab to the new path if it was renamed
+      active: isActiveTab
+        ? { path: newPath, type: 'default' as const }
+        : { path: fileTab.active?.path ?? '', type: 'default' as const }, // Set the active tab to the new path if it was renamed
     };
 
     syncTabSettings(updatedTab);
