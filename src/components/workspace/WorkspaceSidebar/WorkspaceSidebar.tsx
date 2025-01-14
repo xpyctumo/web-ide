@@ -5,7 +5,7 @@ import { AppData } from '@/constant/AppData';
 import { useSettingAction } from '@/hooks/setting.hooks';
 import { Form, Input, Popover, Select, Switch } from 'antd';
 import Link from 'next/link';
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext } from 'react';
 import s from './WorkspaceSidebar.module.scss';
 
 export type WorkSpaceMenu = 'code' | 'build' | 'test-cases' | 'setting' | 'git';
@@ -22,11 +22,7 @@ interface Props {
   projectName?: string | null;
 }
 
-const WorkspaceSidebar: FC<Props> = ({
-  activeMenu,
-  onMenuClicked,
-  projectName,
-}) => {
+const WorkspaceSidebar: FC<Props> = ({ activeMenu, onMenuClicked }) => {
   const {
     isContractDebugEnabled,
     toggleContractDebug,
@@ -67,12 +63,6 @@ const WorkspaceSidebar: FC<Props> = ({
       icon: 'GitBranch',
     },
   ];
-
-  useEffect(() => {
-    if (!projectName) {
-      onMenuClicked('code');
-    }
-  }, []);
 
   const settingContent = () => (
     <div>
@@ -211,9 +201,8 @@ const WorkspaceSidebar: FC<Props> = ({
               <div
                 className={`${s.action} ${
                   activeMenu === menu.value ? s.isActive : ''
-                } ${!projectName ? s.disabled : ''}`}
+                }`}
                 onClick={() => {
-                  if (!projectName) return;
                   onMenuClicked(menu.value);
                 }}
               >
