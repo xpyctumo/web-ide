@@ -148,13 +148,13 @@ const MistiStaticAnalyzer: FC = () => {
 
       <p>
         Detect security issues in TON smart contracts before they reach
-        production.{' '}
+        production with{' '}
         <a
           href="https://nowarp.io/tools/misti/"
           target="_blank"
           rel="noreferrer"
         >
-          Check it out
+          Misti
         </a>
       </p>
       <p>- Misti Version: {MISTI_VERSION.split('-')[0]}</p>
