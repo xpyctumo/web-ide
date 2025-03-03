@@ -22,6 +22,7 @@ jobs:
 
     steps:
       - name: Configure AWS Credentials
+        if: ${{ env.JOB_ENV == 'testing' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -29,10 +30,12 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - id: lower-repo
+        if: ${{ env.JOB_ENV == 'testing' }}
         name: Repository to lowercase
         run: |
           echo "repository=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
 
       - name: Remove ${{ vars.APP_NAME }} from Kubernetes
+        if: ${{ env.JOB_ENV == 'testing' }}
         run: |
           helm uninstall ${{ vars.APP_NAME }} ./helm/app --namespace ${{ vars.APP_NAME }}-${{ env.APP_ENV }}
