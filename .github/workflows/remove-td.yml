@@ -11,7 +11,6 @@ on:
           - td-book
           - td-art
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,6 +31,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Apply AWS k8s config
+        run: aws eks update-kubeconfig --name ${{ vars.AWS_CLUSTER }} --region ${{ vars.AWS_REGION }}
 
       - name: Remove ${{ vars.APP_NAME }} from Kubernetes
         if: ${{ env.JOB_ENV == 'testing' }}
