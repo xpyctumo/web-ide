@@ -38,7 +38,7 @@ const TreeNode: FC<Props> = ({
   commitItemCreation,
 }) => {
   const { droppable } = node;
-  const indent = (depth + 1) * 15;
+  const indent = depth * 15;
 
   const [isEditing, setIsEditing] = useState(false);
 
