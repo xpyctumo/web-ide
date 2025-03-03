@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       domain:
+        type: choice
         description: 'Select the test domain to remove'
         required: true
         options:
