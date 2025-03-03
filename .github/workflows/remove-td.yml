@@ -38,4 +38,4 @@ jobs:
       - name: Remove ${{ vars.APP_NAME }} from Kubernetes
         if: ${{ env.JOB_ENV == 'testing' }}
         run: |
-          helm uninstall ${{ vars.APP_NAME }} ./helm/app --namespace ${{ vars.APP_NAME }}-${{ env.APP_ENV }}
+          helm uninstall ${{ vars.APP_NAME }} --namespace ${{ vars.APP_NAME }}-${{ env.APP_ENV }}
