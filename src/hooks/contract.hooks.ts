@@ -127,7 +127,7 @@ export function useContractAction() {
     );
 
     const logs =
-      typeof response === 'undefined'
+      typeof response !== 'undefined'
         ? (terminalLogMessages([response], [contract]) ?? [
             'Transaction executed successfully',
           ])

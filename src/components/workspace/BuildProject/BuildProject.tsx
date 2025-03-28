@@ -342,7 +342,7 @@ const BuildProject: FC<Props> = ({ projectId, contract, updateContract }) => {
       });
       createLog(
         htmlToAnsi(
-          `Contract deployed on  <b><i>${environment}</i></b> <br /> Contract address: ${contractAddress}`,
+          `Contract deployed on <b><i>${environment}</i></b> <br /> Contract address: ${contractAddress}`,
         ),
         'success',
       );
@@ -360,7 +360,15 @@ const BuildProject: FC<Props> = ({ projectId, contract, updateContract }) => {
       updateContract(openedContract);
 
       updateProjectSetting({
-        contractAddress,
+        contractAddress: contractAddress,
+        contractVerificationInputs: {
+          ...activeProject?.contractVerificationInputs,
+          ...(environment !== 'SANDBOX' && {
+            contractFilePath: activeProject?.selectedContract,
+            contractAddress: contractAddress,
+            network: environment,
+          }),
+        },
       } as ProjectSetting);
     } catch (error) {
       console.log(error, 'error');
