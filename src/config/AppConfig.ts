@@ -21,10 +21,8 @@ export const AppConfig = {
       MIXPANEL_TOKEN !== 'unknown',
   },
   proxy: {
-    key:
-      process.env.REACT_APP_PROXY_KEY ||
-      'temp_3475bde873d9be05422a9765bdab210d',
-    url: process.env.REACT_APP_PROXY_URL || 'https://proxy.cors.sh/',
+    GIT_RAW_CONTENT: 'https://cdn-ide-raw.tonstudio.io',
+    GIT_IMPORT: 'https://cdn-ide-codeload.tonstudio.io',
   },
   cors: {
     proxy:
