@@ -17,7 +17,7 @@ import * as TonCore from '@ton/core';
 import * as TonCrypto from '@ton/crypto';
 import { Blockchain } from '@ton/sandbox';
 import { Buffer } from 'buffer';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Split from 'react-split';
 import { useEffectOnce } from 'react-use';
@@ -89,6 +89,10 @@ const WorkSpace: FC = () => {
     await loadProjectFiles(projectPath);
   };
 
+  const handleMenuClick = useCallback((name: WorkSpaceMenu) => {
+    setActiveMenu(name);
+  }, []);
+
   useEffect(() => {
     if (!cachedProjectPath || searchParams.get('code')) return;
     openProject(cachedProjectPath).catch(() => {});
@@ -132,6 +136,17 @@ const WorkSpace: FC = () => {
     }
   }, [tab]);
 
+  useEffect(() => {
+    if (!isLoaded) return;
+    const newSearchParams = new URLSearchParams({
+      ...Object.fromEntries(searchParams.entries()),
+      tab: activeMenu,
+    } as Record<string, string>).toString();
+    navigate(`${location.pathname}?${newSearchParams}`, {
+      replace: true,
+    });
+  }, [activeMenu]);
+
   useEffectOnce(() => {
     setIsLoaded(true);
     initGlobalSetting();
@@ -157,16 +172,8 @@ const WorkSpace: FC = () => {
         <WorkspaceSidebar
           activeMenu={activeMenu}
           projectName={activeProject?.path ?? ''}
-          onMenuClicked={(name) => {
-            setActiveMenu(name);
-            const newSearchParams = new URLSearchParams({
-              ...Object.fromEntries(searchParams.entries()),
-              tab: name,
-            } as Record<string, string>).toString();
-            navigate(`${location.pathname}?${newSearchParams}`, {
-              replace: true,
-            });
-          }}
+          onMenuClick={handleMenuClick}
+          isLoaded={isLoaded}
         />
       </div>
       <Split

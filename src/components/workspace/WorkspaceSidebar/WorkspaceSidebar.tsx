@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect } from 'react';
 
 import AppIcon from '@/components/ui/icon';
 
+import { getUrlParams } from '@/utility/url';
 import { AppSetting, SidebarMenu, Socials, ThemeSwitcher } from './index';
 import s from './WorkspaceSidebar.module.scss';
 
@@ -17,30 +18,36 @@ export type WorkSpaceMenu =
 
 interface Props {
   activeMenu: WorkSpaceMenu;
-  onMenuClicked: (name: WorkSpaceMenu) => void;
+  onMenuClick: (name: WorkSpaceMenu) => void;
   projectName?: string | null;
+  isLoaded: boolean;
 }
 
 const WorkspaceSidebar: FC<Props> = ({
   activeMenu,
-  onMenuClicked,
+  onMenuClick,
   projectName,
+  isLoaded,
 }) => {
   const handleMenuClick = useCallback(
     (menu: WorkSpaceMenu) => {
       if (!projectName) {
         return;
       }
-      onMenuClicked(menu);
+      onMenuClick(menu);
     },
-    [onMenuClicked, projectName],
+    [onMenuClick, projectName],
   );
 
   useEffect(() => {
-    if (!projectName) {
-      onMenuClicked('code');
+    const { code, importURL } = Object.fromEntries(getUrlParams());
+    const shouldRedirectToCode =
+      !projectName && isLoaded && !code && !importURL;
+
+    if (shouldRedirectToCode) {
+      onMenuClick('code');
     }
-  }, []);
+  }, [projectName, isLoaded, onMenuClick]);
 
   return (
     <aside className={s.container}>
