@@ -85,7 +85,7 @@
     "@types/mixpanel-browser": "^2.47.1",
     "@types/react-syntax-highlighter": "^15.5.10",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
     "babel-loader": "^9.2.1",
     "buffer": "^6.0.3",
     "clean-webpack-plugin": "^4.0.0",
