@@ -1,0 +1,19 @@
+{
+  "extends": ["config:recommended"],
+  "baseBranches": ["main"],
+  "branchName": "td-nature",
+  "branchNameStrict": true,
+  "prConcurrentLimit": 1,
+  "timezone": "Europe/Moscow",
+  "prFooter": "",
+  "separateMajorMinor": false,
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "groupName": "all-npm-dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": [".*"],             
+      "automerge": false                          
+    }
+  ]
+}
