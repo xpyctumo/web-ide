@@ -1,0 +1,67 @@
+name: Tact Bot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  upgrade-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate GitHub App token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - run: |
+          git config user.name  "Tact Bot"
+          git config user.email "bot@tact-lang.org"
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Clean install
+        run: npm ci
+
+      - name: Upgrade all deps
+        run: npm update
+
+      - name: Touch marker
+        run: echo "Updated $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .bot-touch
+      - id: changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git add package.json package-lock.json .bot-touch
+          git commit -m "chore: upgrade deps and touch .bot-touch"
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          base: main                 
+          branch-suffix: timestamp       
+          title: "chore: upgrade npm dependencies"
+          body: |
+            Automated upgrade of all npm dependencies and
+            update of `.bot-touch` by **Tact Bot**.
+          draft: false
