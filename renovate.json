@@ -1,0 +1,18 @@
+{
+  "baseBranches": ["main"],
+  "branchName": "td-nature",
+  "branchNameStrict": true,
+  "prConcurrentLimit": 1,
+  "timezone": "Europe/Moscow",
+  "prFooter": "",
+  "separateMajorMinor": false,
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "groupName": "tact-dependencies",
+      "matchUpdateTypes": ["bump"],
+      "matchPackageNames": ["^@tact-lang/**"],           
+      "automerge": false
+    }
+  ]
+}
