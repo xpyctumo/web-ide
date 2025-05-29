@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranches": ["main"],
+  "branchName": "td-nature",
+  "branchNameStrict": true,
+  "prConcurrentLimit": 1,
+  "timezone": "Europe/Moscow",
+  "prFooter": "",
+  "separateMajorMinor": false,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["**tact-lang/**"],           
+      "automerge": false
+    }
+  ]
+}
