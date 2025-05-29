@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranches": ["main"],
+  "branchPrefix": "td-nature",
+  "additionalBranchPrefix": "",
+  "branchTopic": "",
+  "prConcurrentLimit": 1,
+  "timezone": "Europe/Moscow",
+  "prFooter": "",
+  "separateMajorMinor": false,
+  "separateMinorPatch": false,
+  "enabledManagers": ["npm"],
+  "packageRules": [
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["@tact-lang/compiler"],
+      "automerge": false
+    }
+  ]
+}
